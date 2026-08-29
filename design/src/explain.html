@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shed: what is this</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .map { margin: 14px; flex: 1; }
+  .insp { border-left: 1px solid var(--color-separator); display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .insp section { padding: 13px 18px; border-bottom: 1px solid var(--color-separator); }
+  .insp h2 { margin: 0 0 4px; font: 600 20px/1.15 var(--font-display); letter-spacing: -0.02em; }
+  .path { font-size: 12px; color: var(--color-text-muted); word-break: break-all; }
+  .big { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 10px 0 10px; white-space: nowrap; font: 600 30px/1 var(--font-display); letter-spacing: -0.024em; font-variant-numeric: tabular-nums; }
+  .big small { font: 500 13px/1 var(--font-text); color: var(--color-text-muted); letter-spacing: 0; }
+  .grewl { font: 600 13px/1 var(--font-text); color: var(--color-grew); letter-spacing: 0; }
+  h3 { margin: 0 0 5px; font-size: 13px; font-weight: 600; }
+  .insp p { margin: 0; color: var(--color-text-muted); font-size: 13px; line-height: 1.4; }
+  .steps { display: grid; gap: 8px; margin-top: 4px; }
+  .step { display: flex; gap: 9px; align-items: flex-start; font-size: 13px; color: var(--color-text-muted); }
+  .step i { flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 11px; font-weight: 700; color: var(--color-text-primary); background: var(--color-fill-selected); }
+  .foot { margin-top: auto; padding: 12px 18px 14px; display: grid; gap: 8px; }
+  .foot .btn { width: 100%; }
+  .gain { display: flex; justify-content: space-between; font-size: 13px; color: var(--color-text-muted); margin-bottom: 4px; }
+  .gain b { color: var(--color-free); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .note { display: flex; align-items: center; gap: 6px; justify-content: center; font-size: 12px; color: var(--color-text-muted); }
+</style>
+<div class="win">
+  <div id="side" style="display:contents"></div>
+  <main class="main">
+    <div class="bar"><h1>Disk map</h1><div class="seg"><span class="on">Everything</span><span>Can go</span><span>Grew</span></div></div>
+    <div class="map" id="map"></div>
+  </main>
+  <aside class="insp" id="insp"></aside>
+</div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { ITEMS, mapHTML, gb } = Kit;
+  const { icon, badge, sidebar } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('side').innerHTML = sidebar('Disk map');
+  requestAnimationFrame(() => { const m = $('map'); $('map').innerHTML = mapHTML(m.clientWidth, m.clientHeight, { sel: 'docker', chips: 1 }); });
+  const d = ITEMS.find((x) => x.id === 'docker');
+  const steps = ['Shed stops WSL so nothing writes to the disk.', 'It checks there is room for a safety copy.', 'Windows compacts the disk. This asks for admin.'];
+  $('insp').innerHTML = `
+    <section><h2>${d.name}</h2><div class="path">${d.path}</div>
+      <div class="big">${gb(d.size)}<span class="grewl">+${gb(d.grew)} since Tuesday</span></div>${badge(d.kind)}</section>
+    <section><h3>What is it?</h3><p>${d.what}</p></section>
+    <section><h3>If you shed it</h3><p>${d.gone}</p></section>
+    <section><h3>How it works</h3><div class="steps">${steps.map((s, i) => `<div class="step"><i>${i + 1}</i><span>${s}</span></div>`).join('')}</div></section>
+    <div class="foot"><div class="gain">You get back<b>${gb(d.size - d.after)}</b></div><div class="btn solid">Compact Docker disk</div><div class="note">${icon('shield', 13)}Admin needed for step 3 only</div></div>`;
+</script>
