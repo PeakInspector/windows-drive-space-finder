@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shed hero</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .top { position: absolute; left: 60px; right: 60px; top: 30px; height: 44px; display: flex; align-items: center; gap: 14px; }
+  .brand { display: flex; align-items: center; gap: 9px; font: 600 21px/1 var(--font-display); letter-spacing: -0.02em; }
+  .stat { margin-left: auto; display: flex; align-items: baseline; gap: 8px; color: var(--color-text-muted); font-size: 15px; }
+  .stat b { font: 600 26px/1 var(--font-display); letter-spacing: -0.02em; color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+  .stat b.v { color: var(--color-free); }
+  .since { position: absolute; left: 60px; top: 84px; height: 24px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--color-grew); }
+  .map { position: absolute; left: 60px; top: 116px; width: 1080px; height: 312px; }
+  .copy { position: absolute; left: 0; right: 0; bottom: 50px; text-align: center; }
+  .copy h1 { margin: 0; font: 600 54px/1.06 var(--font-display); letter-spacing: -0.03em; }
+  .copy p { margin: 10px 0 0; font-size: 19px; color: var(--color-text-muted); letter-spacing: -0.012em; }
+  .fine { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; font-size: 12px; color: var(--color-text-muted); letter-spacing: 0; }
+</style>
+<div class="top">
+  <div class="brand"><span id="logo"></span>Shed</div>
+  <div class="stat">Local Disk (C:)<b id="free" class="num"></b><span>free</span></div>
+  <div class="btn solid" id="go"></div>
+</div>
+<div class="since" id="since"></div>
+<div class="map" id="map"></div>
+<div class="copy"><h1 id="h"></h1><p id="s"></p></div>
+<div class="fine">Mockup with sample data. Shed isn't released yet.</div>
+<div id="cur" style="display:contents"></div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { mapHTML, BRAND, free, grewTotal, shedTotal, gb } = Kit;
+  const { icon, cursorSVG, easeIO, ease, span } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('logo').innerHTML = Kit.iconSVG({ size: 30, small: true, uid: 'lg' });
+  $('h').textContent = BRAND.headline;
+  $('s').textContent = BRAND.sub;
+  $('cur').innerHTML = cursorSVG;
+  const F0 = free(), GAIN = shedTotal();
+  // Chips show what grew, a click sheds it, the free block swells, then it rewinds.
+  window.seek = (t) => {
+    const chips = ease(span(t, 0.4, 1.2)) * (1 - span(t, 3.2, 3.6));
+    const p = easeIO(span(t, 3.3, 5.0)) * (1 - easeIO(span(t, 7.3, 7.9)));
+    $('map').innerHTML = mapHTML(1080, 312, { p, chips });
+    $('since').innerHTML = `${icon('up', 14, 2.4)}Since Tuesday, C: grew ${gb(grewTotal())}`;
+    $('since').style.opacity = chips;
+    const f = F0 + GAIN * p;
+    const fe = $('free'); fe.textContent = gb(f); fe.className = `num ${p > 0.02 ? 'v' : ''}`;
+    $('go').innerHTML = p > 0.5 ? `${icon('undo', 15, 2.2)}Undo` : `Shed ${gb(GAIN)}`;
+    const c = $('cursor'), m = easeIO(span(t, 1.6, 2.8));
+    const press = t >= 2.95 && t < 3.15;
+    c.style.transform = `translate(${700 + (1070 - 700) * m}px, ${330 + (52 - 330) * m}px) scale(${press ? 0.9 : 1})`;
+    c.style.opacity = 1 - span(t, 3.4, 3.7);
+  };
+  seek(0);
+</script>
