@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shed: hold</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .win { grid-template-columns: 200px minmax(0, 1fr); }
+  .head { padding: 22px 24px 0; }
+  .head h2 { margin: 0; font: 600 28px/1.1 var(--font-display); letter-spacing: -0.024em; }
+  .head p { margin: 6px 0 0; color: var(--color-text-muted); font-size: 14px; max-width: 64ch; line-height: 1.45; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px 24px 6px; }
+  .card { border-radius: 12px; background: var(--color-bg-raised); padding: 14px 16px; }
+  .card small { display: block; color: var(--color-text-muted); font-size: 12.5px; }
+  .card b { display: block; margin-top: 4px; font: 600 26px/1 var(--font-display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .card b.v { color: var(--color-free); }
+  .list { padding: 8px 16px 0; }
+  .r { display: grid; grid-template-columns: 30px minmax(0, 1fr) 120px 130px 96px; align-items: center; gap: 12px; height: 58px; padding: 0 8px; border-top: 1px solid var(--color-separator); }
+  .r .ic { color: var(--color-text-muted); }
+  .r b { display: block; font-size: 13.5px; font-weight: 600; }
+  .r small { display: block; font-size: 12px; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .left { display: grid; gap: 5px; font-size: 12.5px; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .left i { display: block; height: 4px; border-radius: 2px; background: var(--color-fill-selected); overflow: hidden; }
+  .left i em { display: block; height: 100%; background: var(--color-text-muted); }
+  .size { text-align: right; font-variant-numeric: tabular-nums; }
+  .log { display: flex; align-items: center; gap: 8px; margin: 14px 24px 0; padding-top: 14px; border-top: 1px solid var(--color-separator); color: var(--color-text-muted); font-size: 12.5px; }
+</style>
+<div class="win">
+  <div id="side" style="display:contents"></div>
+  <main class="main">
+    <div class="bar"><h1>Hold</h1><div class="btn small">Restore everything</div></div>
+    <div class="head"><h2>Changed your mind? It's all here.</h2><p>Caches that rebuild themselves are deleted straight away. Anything you made waits here for 7 days on drive D:, so it really leaves C: today and you can still bring it back.</p></div>
+    <div class="cards"><div class="card"><small>Freed on C: today</small><b class="v" id="now"></b></div><div class="card"><small>Held on D: until it expires</small><b id="held"></b></div></div>
+    <div class="list" id="list"></div>
+    <div class="log" id="log"></div>
+  </main>
+</div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { ITEMS, shedTotal, gb } = Kit;
+  const { icon, badge, sidebar } = UI;
+  const $ = (id) => document.getElementById(id);
+  const freed = shedTotal() + [15.7, 24.1, 6.8].reduce((a, b) => a + b, 0);
+  $('side').innerHTML = sidebar('Hold', Kit.free() + freed);
+  const held = [
+    { it: ITEMS.find((x) => x.id === 'iphone'), days: 6, sub: 'iPhone backup from March. The June backup stays.' },
+    { it: ITEMS.find((x) => x.id === 'winold'), days: 4, sub: 'Kept so you can still roll back until Monday' },
+    { it: { name: 'Old installers in Downloads', kind: 'yours', size: 6.8 }, days: 1, sub: '23 .exe and .msi files over a year old' },
+  ];
+  const sizes = [15.7, 24.1, 6.8];
+  $('now').textContent = gb(shedTotal() + sizes.reduce((a, b) => a + b, 0));
+  $('held').textContent = gb(sizes.reduce((a, b) => a + b, 0));
+  $('log').innerHTML = `${icon('file', 14)}Every change is written to Shed\\logs\\2026-11-04.txt, next to the app.`;
+  $('list').innerHTML = held.map((h, i) => `<div class="r">${icon('hold', 18)}<div><b>${h.it.name}</b><small>${h.sub}</small></div>
+    <div class="left">${h.days} ${h.days === 1 ? 'day' : 'days'} left<i><em style="width:${(h.days / 7) * 100}%"></em></i></div><div>${badge(h.it.kind)}</div>
+    <div class="size"><div class="btn small">${icon('undo', 13, 2.2)}Restore</div></div></div>`).join('');
+</script>
