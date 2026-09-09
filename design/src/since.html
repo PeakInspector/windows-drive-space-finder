@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shed: since Tuesday</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+  .win { grid-template-columns: 200px minmax(0, 1fr); }
+  .head { padding: 22px 24px 6px; }
+  .head h2 { margin: 0; font: 600 28px/1.1 var(--font-display); letter-spacing: -0.024em; }
+  .head h2 b { color: var(--color-grew); font-weight: 600; }
+  .head p { margin: 6px 0 0; color: var(--color-text-muted); font-size: 14px; }
+  .list { padding: 10px 16px 0; display: grid; }
+  .r { display: grid; grid-template-columns: 30px minmax(0, 1fr) 150px 150px 92px; align-items: center; gap: 12px; height: 54px; padding: 0 8px; border-top: 1px solid var(--color-separator); }
+  .r .ic.g { color: var(--color-text-muted); }
+  .r b { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .r small { display: block; font-size: 12px; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grow { display: grid; gap: 4px; }
+  .grow span { font-size: 13px; font-weight: 600; color: var(--color-grew); font-variant-numeric: tabular-nums; }
+  .grow i { display: block; height: 5px; border-radius: 3px; background: var(--color-grew); }
+  .size { text-align: right; font-variant-numeric: tabular-nums; color: var(--color-text-muted); }
+  .foot { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 18px 0 24px; border-top: 1px solid var(--color-separator); background: var(--color-bg-surface); }
+  .foot p { margin: 0; flex: 1; color: var(--color-text-muted); }
+  .foot p b { color: var(--color-free); font-weight: 600; }
+</style>
+<div class="win">
+  <div id="side" style="display:contents"></div>
+  <main class="main">
+    <div class="bar"><h1>Since Tuesday</h1><div class="seg"><span>Last scan</span><span class="on">Since Tuesday</span><span>Last month</span></div></div>
+    <div class="head"><h2 id="h"></h2><p>Shed compares this scan with the one from Tuesday, 9:41 PM. Nothing was deleted to find this.</p></div>
+    <div class="list" id="list"></div>
+    <div class="foot"><p id="sum"></p><div class="btn">Review each</div><div class="btn solid" id="go"></div></div>
+  </main>
+</div>
+<script src="kit.js"></script>
+<script src="ui.js"></script>
+<script>
+  const { ITEMS, GROUP_NAME, grewTotal, shedTotal, gb } = Kit;
+  const { icon, badge, sidebar } = UI;
+  const $ = (id) => document.getElementById(id);
+  $('side').innerHTML = sidebar('Since Tuesday');
+  $('h').innerHTML = `C: grew <b>${gb(grewTotal())}</b> in five days.`;
+  const GI = { windows: 'windows', games: 'games', dev: 'code', apps: 'folder', yours: 'user' };
+  const grew = ITEMS.filter((x) => x.grew).sort((a, b) => b.grew - a.grew);
+  const max = grew[0].grew;
+  $('list').innerHTML = grew.map((x) => `<div class="r">${icon(GI[x.group], 18)}<div><b>${x.name}</b><small>${x.path || GROUP_NAME[x.group]}</small></div>
+    <div class="grow"><span>+${gb(x.grew)}</span><i style="width:${Math.max(4, (x.grew / max) * 100)}%"></i></div><div>${badge(x.kind)}</div><div class="size">${gb(x.size)}</div></div>`).join('');
+  $('sum').innerHTML = `Shedding the caches and leftovers gets you <b>${gb(shedTotal())}</b> back. Your downloads stay.`;
+  $('go').textContent = `Shed ${gb(shedTotal())}`;
+</script>
