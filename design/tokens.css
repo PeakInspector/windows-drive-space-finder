@@ -1,0 +1,70 @@
+/* Design tokens. Primitives name a value, semantics name a job.
+   Components use semantic tokens only. Contrast was measured with a WCAG 2 script. */
+
+:root {
+  /* Neutrals */
+  --gray-0: #000000;
+  --gray-850: #1c1c1e;
+  --gray-800: #232326;
+  --gray-750: #2c2c2e;
+  --gray-700: #3a3a3c;
+  --gray-400: #a1a1a6;
+  --gray-50: #f5f5f7;
+
+  /* Free space. Violet means space you got back, and nothing else. */
+  --violet-100: #f1d9ff;
+  --violet-300: #c58cff;
+  --violet-500: #8a4dff;
+
+  /* What grew since the last scan */
+  --coral-400: #ff7a6b;
+
+  /* Item badges. Each always comes with its label. */
+  --sky-300: #64d2ff;
+  --green-400: #30d158;
+  --yellow-400: #ffd60a;
+
+  /* Disk map groups: dark tints, so white labels stay above 10:1 */
+  --map-windows: #2f3540;
+  --map-games: #2e3a33;
+  --map-dev: #3b3330;
+  --map-apps: #35323d;
+  --map-yours: #3a3a3c;
+
+  /* Surfaces */
+  --color-bg-page: var(--gray-0);
+  --color-bg-canvas: #0e0e10;
+  --color-bg-surface: var(--gray-850);
+  --color-bg-sidebar: var(--gray-800);
+  --color-bg-raised: var(--gray-750);
+
+  /* Text. primary on surface 15.63:1. muted on surface 6.61:1, on raised 5.42:1, on a map tile 4.79:1 */
+  --color-text-primary: var(--gray-50);
+  --color-text-muted: var(--gray-400);
+  --color-text-on-free: var(--gray-0); /* 8.57:1 on violet-300 */
+
+  /* Lines and fills */
+  --color-separator: rgb(255 255 255 / 0.1);
+  --color-fill-quiet: rgb(255 255 255 / 0.08);
+  --color-fill-selected: rgb(255 255 255 / 0.16);
+
+  /* Roles */
+  --color-free: var(--violet-300);
+  --color-grew: var(--coral-400); /* 6.68:1 on surface */
+  --color-badge-rebuilds: var(--sky-300);
+  --color-badge-safe: var(--green-400);
+  --color-badge-yours: var(--yellow-400);
+  --color-action-solid: var(--gray-50);
+  --color-action-label: var(--gray-0);
+
+  --gradient-free: linear-gradient(135deg in oklab, var(--violet-100), var(--violet-300) 50%, var(--violet-500));
+
+  /* Type. SF Pro is not redistributable, so Apple devices get it from the system and everyone else gets Inter. */
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+  --font-text: "SF Pro Text", -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+
+  --radius-control: 8px;
+  --radius-tile: 7px;
+  --radius-window: 14px;
+  --radius-pill: 999px;
+}
