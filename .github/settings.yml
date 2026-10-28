@@ -1,0 +1,10 @@
+# The GitHub "About" box.
+repository:
+  name: windows-drive-space-finder
+  description: Find what ate your C: drive: shows what grew since the last scan, explains it in plain words, gives the space back.
+  homepage: https://github.com/PeakInspector/windows-drive-space-finder
+  topics: ["windows", "disk-space", "cleaner", "storage", "system-tools", "portable", "free"]
+  private: false
+  has_issues: true
+  has_projects: false
+  has_wiki: false
